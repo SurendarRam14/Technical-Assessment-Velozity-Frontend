@@ -22,16 +22,21 @@ import {
   Inbox,
   LayoutGrid,
   Columns3,
+  Plus,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { NotificationBell } from '../components/notifications/NotificationBell';
+import { useAuth } from '../auth/AuthContext';
+import { NewTaskModal } from '../components/tasks/NewTaskModal';
 
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const ProjectDetailPage: React.FC = () => {
+  const { user } = useAuth();
   const { projectId } = useParams<{ projectId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<'board' | 'grid'>('board');
+  const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
 
   // Extract filters from URL query parameters (single source of truth)
   const filters: TaskFilters = {
@@ -66,6 +71,10 @@ export const ProjectDetailPage: React.FC = () => {
 
   // 3. Socket real-time activity and in-place query cache patching
   const { activities, isLoading: isActivityLoading, isConnected } = useProjectActivity(projectId);
+
+  // Determine if current user can create tasks (Admin or owning PM)
+  const canCreateTask =
+    user?.role === 'ADMIN' || (user?.role === 'PM' && project?.pmId === user?.id);
 
   // Handle 403 Forbidden State (e.g. Developer not assigned to project)
   const isForbidden =
@@ -207,6 +216,16 @@ export const ProjectDetailPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            {canCreateTask && (
+              <Button
+                onClick={() => setIsNewTaskOpen(true)}
+                size="sm"
+                className="gap-1.5 shadow-md shadow-primary/20"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Task</span>
+              </Button>
+            )}
             <NotificationBell />
           </div>
         </div>
@@ -258,8 +277,20 @@ export const ProjectDetailPage: React.FC = () => {
               Tasks ({tasks.length})
             </h2>
 
-            {/* View Mode Switcher */}
-            <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-lg border border-border/50">
+            {/* View Mode Switcher & New Task */}
+            <div className="flex items-center gap-2">
+              {canCreateTask && (
+                <Button
+                  onClick={() => setIsNewTaskOpen(true)}
+                  size="sm"
+                  variant="outline"
+                  className="h-8 gap-1.5 text-xs border-primary/40 text-primary hover:bg-primary/10"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Task</span>
+                </Button>
+              )}
+              <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-lg border border-border/50">
               <Button
                 variant={viewMode === 'board' ? 'default' : 'ghost'}
                 size="sm"
@@ -280,6 +311,7 @@ export const ProjectDetailPage: React.FC = () => {
               </Button>
             </div>
           </div>
+        </div>
 
           {isTasksLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -343,6 +375,16 @@ export const ProjectDetailPage: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* New Task Modal */}
+      {canCreateTask && projectId && (
+        <NewTaskModal
+          projectId={projectId}
+          projectName={project?.name}
+          isOpen={isNewTaskOpen}
+          onClose={() => setIsNewTaskOpen(false)}
+        />
+      )}
     </div>
   );
 };

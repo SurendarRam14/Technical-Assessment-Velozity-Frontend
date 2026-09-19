@@ -1,9 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { ActivityLog } from '../../types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Activity, ArrowRight } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface ActivityFeedProps {
@@ -17,21 +17,6 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
   isLoading = false,
   isConnected = false,
 }) => {
-  const getStatusBadge = (status?: string | null) => {
-    if (!status) return null;
-    let variant = 'outline';
-    if (status === 'TODO') variant = 'todo';
-    if (status === 'IN_PROGRESS') variant = 'inProgress';
-    if (status === 'IN_REVIEW') variant = 'inReview';
-    if (status === 'DONE') variant = 'done';
-
-    return (
-      <Badge variant={variant as any} className="text-[10px] uppercase px-1.5 py-0">
-        {status.replace('_', ' ')}
-      </Badge>
-    );
-  };
-
   return (
     <Card className="glass-card shadow-md">
       <CardHeader className="pb-3 border-b border-border/40">
@@ -78,33 +63,36 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({
           <div className="divide-y divide-border/30 max-h-[420px] overflow-y-auto">
             {activities.map((item) => {
               const userName = item.user?.name || 'User';
-              const taskTitle = item.task?.title || `Task #${item.taskId.slice(0, 6)}`;
+              const shortId = item.taskId.slice(0, 8);
+              const from = item.fromStatus || 'NONE';
+              const to = item.toStatus;
               const relativeTime = formatDistanceToNow(new Date(item.createdAt), {
                 addSuffix: true,
               });
 
               return (
-                <div key={item.id} className="p-3 hover:bg-secondary/20 transition-colors text-xs space-y-1">
-                  <div className="flex items-center justify-between gap-2 text-muted-foreground">
-                    <span className="font-semibold text-foreground truncate max-w-[150px]">
-                      {userName}
-                    </span>
-                    <span className="text-[10px] shrink-0">{relativeTime}</span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 flex-wrap text-muted-foreground">
-                    <span className="text-foreground/90 font-medium truncate max-w-[180px]">
-                      {taskTitle}
-                    </span>
-                    <span className="text-[11px]">moved from</span>
-                    {item.fromStatus ? (
-                      getStatusBadge(item.fromStatus)
-                    ) : (
-                      <span className="text-[10px] text-muted-foreground italic">Created</span>
-                    )}
-                    <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />
-                    {getStatusBadge(item.toStatus)}
-                  </div>
+                <div
+                  key={item.id}
+                  className="p-3 hover:bg-secondary/20 transition-colors text-xs leading-relaxed text-foreground"
+                >
+                  <span className="font-semibold">{userName}</span>
+                  {' moved '}
+                  <Link
+                    to={`/tasks/${item.taskId}`}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    Task #{shortId}
+                  </Link>
+                  {' from '}
+                  <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground font-medium">
+                    {from}
+                  </span>
+                  {' → '}
+                  <span className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                    {to}
+                  </span>
+                  {' · '}
+                  <span className="text-muted-foreground">{relativeTime}</span>
                 </div>
               );
             })}

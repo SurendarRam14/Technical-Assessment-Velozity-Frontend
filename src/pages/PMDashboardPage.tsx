@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
@@ -9,6 +9,7 @@ import {
   Briefcase,
   ArrowLeft,
   FolderKanban,
+  FolderPlus,
   CheckSquare,
   Clock,
   AlertCircle,
@@ -19,10 +20,12 @@ import {
 } from 'lucide-react';
 import { dashboardApi, PmDashboardData } from '@/api/dashboard.api';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { NewProjectModal } from '@/components/projects/NewProjectModal';
 import { cn } from '@/lib/utils';
 import { TaskStatus } from '@/types';
 
 export const PMDashboardPage: React.FC = () => {
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const { data, isLoading, error } = useQuery<PmDashboardData>({
     queryKey: ['dashboard', 'pm'],
     queryFn: () => dashboardApi.getPm(),
@@ -63,6 +66,14 @@ export const PMDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setIsNewProjectOpen(true)}
+            className="gap-1.5 shadow-lg shadow-primary/20"
+            size="sm"
+          >
+            <FolderPlus className="w-4 h-4" />
+            <span>New Project</span>
+          </Button>
           <NotificationBell />
         </div>
       </header>
@@ -463,6 +474,12 @@ export const PMDashboardPage: React.FC = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* New Project Modal */}
+      <NewProjectModal
+        isOpen={isNewProjectOpen}
+        onClose={() => setIsNewProjectOpen(false)}
+      />
     </div>
   );
 };

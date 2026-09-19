@@ -14,7 +14,8 @@ export const activityApi = {
     if (params.since) query.append('since', params.since);
     if (params.limit) query.append('limit', String(params.limit));
 
-    const response = await api.get<ActivityLog[]>('/activity', { params: query });
-    return response.data;
+    const response = await api.get<{ activityLogs: ActivityLog[] } | ActivityLog[]>('/activity', { params: query });
+    const data = response.data;
+    return Array.isArray(data) ? data : (data as any).activityLogs || [];
   },
 };

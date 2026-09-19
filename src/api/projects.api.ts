@@ -14,6 +14,12 @@ export const projectsApi = {
     return (data as any).project || (data as Project);
   },
 
+  create: async (data: { name: string; clientId: string; pmId?: string }): Promise<Project> => {
+    const response = await api.post<{ project: Project } | Project>('/projects', data);
+    const resData = response.data;
+    return (resData as any).project || (resData as Project);
+  },
+
   createTask: async (
     projectId: string,
     data: {

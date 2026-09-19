@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   Users,
   FolderKanban,
+  FolderPlus,
   Activity,
   CheckSquare,
   Building2,
@@ -21,10 +22,12 @@ import { dashboardApi, AdminDashboardData } from '@/api/dashboard.api';
 import { usePresence } from '@/sockets/usePresence';
 import { PresenceBadge } from '@/components/presence/PresenceBadge';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { NewProjectModal } from '@/components/projects/NewProjectModal';
 import { cn } from '@/lib/utils';
 import { TaskStatus } from '@/types';
 
 export const AdminDashboardPage: React.FC = () => {
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const { count: presenceCount, isConnected: isPresenceConnected } = usePresence();
 
   const { data, isLoading, error } = useQuery<AdminDashboardData>({
@@ -65,6 +68,14 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setIsNewProjectOpen(true)}
+            className="gap-1.5 shadow-lg shadow-primary/20"
+            size="sm"
+          >
+            <FolderPlus className="w-4 h-4" />
+            <span>New Project</span>
+          </Button>
           <PresenceBadge count={presenceCount} isConnected={isPresenceConnected} />
           <NotificationBell />
         </div>
@@ -398,6 +409,12 @@ export const AdminDashboardPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* New Project Modal */}
+      <NewProjectModal
+        isOpen={isNewProjectOpen}
+        onClose={() => setIsNewProjectOpen(false)}
+      />
     </div>
   );
 };

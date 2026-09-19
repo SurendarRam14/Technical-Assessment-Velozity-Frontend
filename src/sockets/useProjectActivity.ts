@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSocket } from './useSocket';
 import { activityApi } from '../api/activity.api';
@@ -9,7 +9,15 @@ export const useProjectActivity = (projectId?: string) => {
   const queryClient = useQueryClient();
   const [activities, setActivities] = useState<ActivityLog[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  // Ref to always access latest activities without stale closure
+  const activitiesRef = useRef<ActivityLog[]>(activities);
+  useEffect(() => {
+    activitiesRef.current = activities;
+  }, [activities]);
+
   const lastSeenAtRef = useRef<string | null>(null);
+  const wasDisconnectedRef = useRef<boolean>(false);
 
   // 1. Initial fetch of recent activity
   useEffect(() => {
@@ -24,8 +32,8 @@ export const useProjectActivity = (projectId?: string) => {
             lastSeenAtRef.current = data[0].createdAt;
           }
         }
-      } catch {
-        // Fallback gracefully
+      } catch (err) {
+        console.error('Failed to fetch initial activity:', err);
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -40,7 +48,43 @@ export const useProjectActivity = (projectId?: string) => {
     };
   }, [projectId]);
 
-  // 2. Real-time activity:new listener and in-place cache patching
+  // 2. Reconnect catch-up function
+  const performCatchup = useCallback(async () => {
+    // Timestamp of the latest event already shown in the feed
+    const lastShownTimestamp =
+      activitiesRef.current[0]?.createdAt || lastSeenAtRef.current || undefined;
+
+    try {
+      const missed = await activityApi.list({
+        projectId,
+        since: lastShownTimestamp,
+        limit: 20,
+      });
+
+      if (missed && missed.length > 0) {
+        console.log(`[useProjectActivity] Caught up ${missed.length} missed events`);
+
+        setActivities((prev) => {
+          const existingIds = new Set(prev.map((a) => a.id));
+          const newItems = missed.filter((m) => !existingIds.has(m.id));
+          if (newItems.length === 0) return prev;
+          return [...newItems, ...prev];
+        });
+
+        lastSeenAtRef.current = missed[0].createdAt;
+
+        // Invalidate tasks query cache to sync board with any missed task status transitions
+        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+        if (projectId) {
+          queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+        }
+      }
+    } catch (err) {
+      console.error('[useProjectActivity] Catchup error:', err);
+    }
+  }, [projectId, queryClient]);
+
+  // 3. Socket event handling: activity:new, disconnect, connect, reconnect
   useEffect(() => {
     if (!socket) return;
 
@@ -74,7 +118,7 @@ export const useProjectActivity = (projectId?: string) => {
         createdAt: event.createdAt,
       };
 
-      // Prepend to local activity feed
+      // Prepend to local activity feed, deduplicating
       setActivities((prev) => {
         if (prev.some((a) => a.id === event.id)) return prev;
         return [newLog, ...prev];
@@ -114,39 +158,39 @@ export const useProjectActivity = (projectId?: string) => {
       );
     };
 
-    socket.on('activity:new', handleActivityNew);
+    const handleDisconnect = () => {
+      console.log('[useProjectActivity] Socket disconnected');
+      wasDisconnectedRef.current = true;
+    };
 
-    // 3. Reconnect catchup via DB
-    const handleReconnect = async () => {
-      if (!lastSeenAtRef.current) return;
-      try {
-        const missed = await activityApi.list({
-          projectId,
-          since: lastSeenAtRef.current,
-          limit: 20,
-        });
-
-        if (missed.length > 0) {
-          setActivities((prev) => {
-            const existingIds = new Set(prev.map((a) => a.id));
-            const newItems = missed.filter((m) => !existingIds.has(m.id));
-            return [...newItems, ...prev];
-          });
-          lastSeenAtRef.current = missed[0].createdAt;
-          queryClient.invalidateQueries({ queryKey: ['tasks'] });
-        }
-      } catch {
-        // Ignore catchup error
+    const handleConnect = () => {
+      if (wasDisconnectedRef.current) {
+        console.log('[useProjectActivity] Socket reconnected after disconnect, triggering catchup...');
+        wasDisconnectedRef.current = false;
+        performCatchup();
       }
     };
 
-    socket.on('connect', handleReconnect);
+    // Also handle browser window online event (DevTools offline/online toggle)
+    const handleOnline = () => {
+      console.log('[useProjectActivity] Browser came online, checking catchup...');
+      performCatchup();
+    };
+
+    socket.on('activity:new', handleActivityNew);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connect', handleConnect);
+    socket.io?.on('reconnect', handleConnect);
+    window.addEventListener('online', handleOnline);
 
     return () => {
       socket.off('activity:new', handleActivityNew);
-      socket.off('connect', handleReconnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connect', handleConnect);
+      socket.io?.off('reconnect', handleConnect);
+      window.removeEventListener('online', handleOnline);
     };
-  }, [socket, projectId, queryClient]);
+  }, [socket, projectId, queryClient, performCatchup]);
 
   return {
     activities,
