@@ -28,6 +28,7 @@ import { format } from 'date-fns';
 import { NotificationBell } from '../components/notifications/NotificationBell';
 import { useAuth } from '../auth/AuthContext';
 import { NewTaskModal } from '../components/tasks/NewTaskModal';
+import { UserNav } from '../components/layout/UserNav';
 
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -227,6 +228,7 @@ export const ProjectDetailPage: React.FC = () => {
               </Button>
             )}
             <NotificationBell />
+            <UserNav />
           </div>
         </div>
 

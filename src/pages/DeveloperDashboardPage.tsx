@@ -1,18 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Code,
-  ArrowLeft,
   CheckCircle2,
   AlertCircle,
   CheckSquare,
 } from 'lucide-react';
 import { dashboardApi, DeveloperDashboardData } from '@/api/dashboard.api';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { UserNav } from '@/components/layout/UserNav';
 import { TaskCard } from '@/components/tasks/TaskCard';
 import { cn } from '@/lib/utils';
 
@@ -32,11 +30,6 @@ export const DeveloperDashboardPage: React.FC = () => {
       {/* Top Bar */}
       <header className="flex items-center justify-between pb-6 border-b border-border gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <Link to="/login">
-            <Button variant="ghost" size="icon" title="Back to Login">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-          </Link>
           <div className="flex items-center gap-2">
             <Code className="w-6 h-6 text-cyan-400" />
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
@@ -50,6 +43,7 @@ export const DeveloperDashboardPage: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <NotificationBell />
+          <UserNav />
         </div>
       </header>
 

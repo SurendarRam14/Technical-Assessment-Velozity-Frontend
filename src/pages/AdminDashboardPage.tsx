@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Shield,
-  ArrowLeft,
   Users,
   FolderKanban,
   FolderPlus,
@@ -23,6 +22,7 @@ import { usePresence } from '@/sockets/usePresence';
 import { PresenceBadge } from '@/components/presence/PresenceBadge';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NewProjectModal } from '@/components/projects/NewProjectModal';
+import { UserNav } from '@/components/layout/UserNav';
 import { cn } from '@/lib/utils';
 import { TaskStatus } from '@/types';
 
@@ -51,11 +51,6 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Top Bar */}
       <header className="flex items-center justify-between pb-6 border-b border-border gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <Link to="/login">
-            <Button variant="ghost" size="icon" title="Back to Login">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-          </Link>
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-primary" />
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
@@ -78,6 +73,7 @@ export const AdminDashboardPage: React.FC = () => {
           </Button>
           <PresenceBadge count={presenceCount} isConnected={isPresenceConnected} />
           <NotificationBell />
+          <UserNav />
         </div>
       </header>
 

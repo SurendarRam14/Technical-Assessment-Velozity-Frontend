@@ -5,9 +5,11 @@ Modern, high-performance React + TypeScript web application built with Vite, Tai
 ---
 
 ## Features
-- **Role-Based Authentication**:
+- **Role-Based Authentication & User Switching**:
   - In-memory JWT access token management with silent 401 refresh via `httpOnly` cookie.
   - Role route guards (`RequireRole`) for `ADMIN`, `PM`, and `DEVELOPER`.
+  - Seamless User Switching & Logout: `UserNav` component in top navigation showing active user badge, email, and one-click "Switch User / Sign Out" button.
+  - Non-blocking `LoginPage`: Displays current active session with "Continue to Dashboard" or "Sign Out", while allowing instant 1-click switching to any demo account (`ADMIN`, `PM`, `DEVELOPER`).
   - 1-click demo login buttons for instant evaluation.
 - **Real-Time Kanban Board & Live Activity**:
   - 4-column drag/status-controlled board (`TODO`, `IN_PROGRESS`, `IN_REVIEW`, `DONE`).

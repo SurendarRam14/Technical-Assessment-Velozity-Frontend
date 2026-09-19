@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Briefcase, Code, Loader2, AlertCircle, Lock, Mail } from 'lucide-react';
+import { Shield, Briefcase, Code, Loader2, AlertCircle, Lock, Mail, LogOut, ArrowRight } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
-  const { user, login } = useAuth();
+  const { user, login, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,13 +16,25 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // If already logged in, redirect to intended page or role dashboard
-  if (user) {
+  const handleContinue = () => {
+    if (!user) return;
     const from = (location.state as any)?.from?.pathname;
-    const defaultRoute = user.role === 'ADMIN' ? '/admin' : user.role === 'PM' ? '/pm' : '/developer';
-    return <Navigate to={from || defaultRoute} replace />;
-  }
+    const defaultRoute =
+      user.role === 'ADMIN' ? '/admin' : user.role === 'PM' ? '/pm' : '/developer';
+    navigate(from || defaultRoute, { replace: true });
+  };
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await logout();
+      setError(null);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +96,47 @@ export const LoginPage: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {user && (
+              <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 space-y-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                        <span>{user.name}</span>
+                        <Badge variant="secondary" className="text-[9px] px-1 py-0">{user.role}</Badge>
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">{user.email}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="w-full text-xs h-8 font-medium gap-1"
+                    onClick={handleContinue}
+                  >
+                    <span>Continue to Dashboard</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs h-8 font-medium text-destructive hover:bg-destructive/10 gap-1"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                  >
+                    {isLoggingOut ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />}
+                    <span>Sign Out</span>
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {error && (
               <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
