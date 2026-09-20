@@ -82,7 +82,7 @@ export const LoginPage: React.FC = () => {
       <div className="w-full max-w-md space-y-6 relative z-10">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 text-primary mb-2 shadow-lg shadow-primary/5">
-            <span className="text-2xl font-black tracking-tight">V</span>
+            <span className="text-2xl font-black tracking-tight">P</span>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Project Pulse</h1>
           <p className="text-sm text-muted-foreground">Real-Time Client Project Dashboard</p>
