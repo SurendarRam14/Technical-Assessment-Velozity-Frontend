@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, Loader2 } from 'lucide-react';
+import { LogOut, Loader2, Shield, FolderKanban, Users, Building2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const UserNav: React.FC = () => {
   const { user, logout } = useAuth();
@@ -54,6 +55,55 @@ export const UserNav: React.FC = () => {
 
   return (
     <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-border/60">
+      {/* Admin Quick Nav Links */}
+      {user.role === 'ADMIN' && (
+        <div className="flex items-center gap-1 pr-2 sm:pr-3 border-r border-border/60">
+          <Link to="/admin">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-xs text-muted-foreground hover:text-primary gap-1"
+              title="Admin Overview"
+            >
+              <Shield className="w-3.5 h-3.5 text-primary" />
+              <span className="hidden lg:inline">Overview</span>
+            </Button>
+          </Link>
+          <Link to="/admin/projects">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-xs text-muted-foreground hover:text-primary gap-1"
+              title="All Projects"
+            >
+              <FolderKanban className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Projects</span>
+            </Button>
+          </Link>
+          <Link to="/admin/users">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-xs text-muted-foreground hover:text-primary gap-1"
+              title="Users Directory"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Users</span>
+            </Button>
+          </Link>
+          <Link to="/admin/clients">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 text-xs text-muted-foreground hover:text-primary gap-1"
+              title="Clients Directory"
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Clients</span>
+            </Button>
+          </Link>
+        </div>
+      )}
       {/* User Info */}
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full bg-secondary/80 border border-border/80 flex items-center justify-center font-bold text-xs text-foreground shadow-sm">

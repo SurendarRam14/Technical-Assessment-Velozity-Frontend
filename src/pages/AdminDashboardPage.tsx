@@ -23,6 +23,7 @@ import { PresenceBadge } from '@/components/presence/PresenceBadge';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NewProjectModal } from '@/components/projects/NewProjectModal';
 import { UserNav } from '@/components/layout/UserNav';
+import { AdminNav } from '@/components/layout/AdminNav';
 import { cn } from '@/lib/utils';
 import { TaskStatus } from '@/types';
 
@@ -77,6 +78,9 @@ export const AdminDashboardPage: React.FC = () => {
         </div>
       </header>
 
+      {/* Admin Navigation Tabs */}
+      <AdminNav />
+
       {/* Error state */}
       {error && (
         <Card className="border-destructive/40 bg-destructive/5 p-4 text-destructive flex items-center gap-3">
@@ -89,25 +93,29 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* KPI Cards Grid */}
       <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {/* Total Projects */}
-        <Card className="glass-card">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Total Projects
-            </CardTitle>
-            <FolderKanban className="w-4 h-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="h-8 w-16 bg-muted/40 rounded animate-pulse" />
-            ) : (
-              <div className="text-2xl sm:text-3xl font-bold text-foreground">
-                {totals?.totalProjects ?? 0}
-              </div>
-            )}
-            <CardDescription className="text-[11px] mt-1">Across all clients</CardDescription>
-          </CardContent>
-        </Card>
+        {/* Total Projects - Clickable Link to /admin/projects */}
+        <Link to="/admin/projects" className="block group">
+          <Card className="glass-card h-full transition-all duration-200 group-hover:border-primary/50 group-hover:bg-primary/5">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-xs font-medium text-muted-foreground group-hover:text-primary uppercase tracking-wider transition-colors">
+                Total Projects
+              </CardTitle>
+              <FolderKanban className="w-4 h-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="h-8 w-16 bg-muted/40 rounded animate-pulse" />
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  {totals?.totalProjects ?? 0}
+                </div>
+              )}
+              <CardDescription className="text-[11px] mt-1 group-hover:underline">
+                View all projects &rarr;
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </Link>
 
         {/* Total Tasks */}
         <Card className="glass-card">
@@ -129,45 +137,53 @@ export const AdminDashboardPage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Total Clients */}
-        <Card className="glass-card">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Total Clients
-            </CardTitle>
-            <Building2 className="w-4 h-4 text-amber-400" />
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="h-8 w-16 bg-muted/40 rounded animate-pulse" />
-            ) : (
-              <div className="text-2xl sm:text-3xl font-bold text-foreground">
-                {totals?.totalClients ?? 0}
-              </div>
-            )}
-            <CardDescription className="text-[11px] mt-1">Active client accounts</CardDescription>
-          </CardContent>
-        </Card>
+        {/* Total Clients - Clickable Link to /admin/clients */}
+        <Link to="/admin/clients" className="block group">
+          <Card className="glass-card h-full transition-all duration-200 group-hover:border-amber-500/50 group-hover:bg-amber-500/5">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-xs font-medium text-muted-foreground group-hover:text-amber-400 uppercase tracking-wider transition-colors">
+                Total Clients
+              </CardTitle>
+              <Building2 className="w-4 h-4 text-amber-400" />
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="h-8 w-16 bg-muted/40 rounded animate-pulse" />
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-amber-400 transition-colors">
+                  {totals?.totalClients ?? 0}
+                </div>
+              )}
+              <CardDescription className="text-[11px] mt-1 group-hover:underline">
+                View all clients &rarr;
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </Link>
 
-        {/* Total Users */}
-        <Card className="glass-card">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Total Users
-            </CardTitle>
-            <Users className="w-4 h-4 text-violet-400" />
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="h-8 w-16 bg-muted/40 rounded animate-pulse" />
-            ) : (
-              <div className="text-2xl sm:text-3xl font-bold text-foreground">
-                {totals?.totalUsers ?? 0}
-              </div>
-            )}
-            <CardDescription className="text-[11px] mt-1">Admins, PMs & Devs</CardDescription>
-          </CardContent>
-        </Card>
+        {/* Total Users - Clickable Link to /admin/users */}
+        <Link to="/admin/users" className="block group">
+          <Card className="glass-card h-full transition-all duration-200 group-hover:border-violet-500/50 group-hover:bg-violet-500/5">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardTitle className="text-xs font-medium text-muted-foreground group-hover:text-violet-400 uppercase tracking-wider transition-colors">
+                Total Users
+              </CardTitle>
+              <Users className="w-4 h-4 text-violet-400" />
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <div className="h-8 w-16 bg-muted/40 rounded animate-pulse" />
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-violet-400 transition-colors">
+                  {totals?.totalUsers ?? 0}
+                </div>
+              )}
+              <CardDescription className="text-[11px] mt-1 group-hover:underline">
+                View user directory &rarr;
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </Link>
 
         {/* Overdue Tasks */}
         <Card

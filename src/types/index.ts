@@ -16,6 +16,9 @@ export interface Client {
   id: string;
   name: string;
   projects?: Project[];
+  _count?: {
+    projects: number;
+  };
 }
 
 export interface Project {
@@ -27,6 +30,9 @@ export interface Project {
   pm?: User;
   createdAt: string;
   tasks?: Task[];
+  _count?: {
+    tasks: number;
+  };
 }
 
 export interface Task {
