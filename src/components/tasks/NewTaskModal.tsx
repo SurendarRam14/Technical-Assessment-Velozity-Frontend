@@ -34,12 +34,12 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({
 
   // Fetch users to populate developer assignees
   const { data: users = [], isLoading: isUsersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => usersApi.list(),
+    queryKey: ['users', 'DEVELOPER'],
+    queryFn: () => usersApi.list('DEVELOPER'),
     enabled: isOpen,
   });
 
-  // Filter for developers only
+  // Filter for developers (supports both scoped and full response)
   const developers = users.filter((u) => u.role === 'DEVELOPER');
 
   // Task creation mutation
