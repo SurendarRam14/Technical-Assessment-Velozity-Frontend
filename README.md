@@ -1,6 +1,6 @@
-# Real-Time Client Project Dashboard - Frontend
+# Project Pulse - Frontend
 
-Modern, high-performance React + TypeScript web application built with Vite, Tailwind CSS, TanStack Query, and Socket.io-client.
+Real-Time Client Project Dashboard — Modern, high-performance React + TypeScript web application built with Vite, Tailwind CSS, TanStack Query, and Socket.io-client.
 
 ---
 
@@ -29,6 +29,11 @@ Modern, high-performance React + TypeScript web application built with Vite, Tai
   - **Admin**: Global totals, overdue tasks count, live presence, status distribution, and system-wide activity.
   - **PM**: Owned projects summary, task counts by status/priority, due this week, and project progress percentage bars.
   - **Developer**: Assigned tasks sorted strictly by priority then due date, with interactive status controls and overdue alerts.
+- **Admin Views & Dedicated Management**:
+  - **All Projects (`/admin/projects`)**: Complete table of every project across all PMs with client name, owning PM, task count (`_count.tasks`), and created date, with live search and project creation.
+  - **Users Directory (`/admin/users`)**: Filterable table of all system users with name, email, role badge (`ADMIN`, `PM`, `DEVELOPER`), debounced search, and a role filter dropdown (`All Roles`, `Admin`, `PM`, `Developer`).
+  - **Clients (`/admin/clients`)**: Directory of all client organizations with associated active project counts (`_count.projects`) and live search.
+  - **Admin Navigation (`AdminNav` & `UserNav`)**: Dedicated tab navigation across Admin pages and global Admin quick-navigation links in `UserNav` visible exclusively when authenticated as an Admin.
 - **Polished UX**:
   - Structural loading skeletons across all views (no full-page spinners).
   - Distinct empty states ("No tasks match these filters" with "Reset Filters" button).

@@ -4,6 +4,9 @@ import { useAuth } from './auth/useAuth';
 import { RequireRole } from './auth/RequireRole';
 import { LoginPage } from './pages/LoginPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { AdminProjectsPage } from './pages/AdminProjectsPage';
+import { AdminUsersPage } from './pages/AdminUsersPage';
+import { AdminClientsPage } from './pages/AdminClientsPage';
 import { PMDashboardPage } from './pages/PMDashboardPage';
 import { DeveloperDashboardPage } from './pages/DeveloperDashboardPage';
 import { ProjectDetailPage } from './pages/ProjectDetailPage';
@@ -18,7 +21,7 @@ const RootRedirect: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background space-y-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground animate-pulse">Initializing Velozity...</p>
+        <p className="text-sm text-muted-foreground animate-pulse">Initializing Project Pulse...</p>
       </div>
     );
   }
@@ -46,6 +49,30 @@ export const router = createBrowserRouter([
     element: (
       <RequireRole roles={['ADMIN']}>
         <AdminDashboardPage />
+      </RequireRole>
+    ),
+  },
+  {
+    path: '/admin/projects',
+    element: (
+      <RequireRole roles={['ADMIN']}>
+        <AdminProjectsPage />
+      </RequireRole>
+    ),
+  },
+  {
+    path: '/admin/users',
+    element: (
+      <RequireRole roles={['ADMIN']}>
+        <AdminUsersPage />
+      </RequireRole>
+    ),
+  },
+  {
+    path: '/admin/clients',
+    element: (
+      <RequireRole roles={['ADMIN']}>
+        <AdminClientsPage />
       </RequireRole>
     ),
   },
