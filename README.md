@@ -1,6 +1,6 @@
-# Real-Time Client Project Dashboard - Frontend
+# Project Pulse - Frontend
 
-Modern, high-performance React + TypeScript web application built with Vite, Tailwind CSS, TanStack Query, and Socket.io-client.
+Real-Time Client Project Dashboard — Modern, high-performance React + TypeScript web application built with Vite, Tailwind CSS, TanStack Query, and Socket.io-client.
 
 ---
 

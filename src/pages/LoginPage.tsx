@@ -53,8 +53,8 @@ export const LoginPage: React.FC = () => {
         loggedInUser.role === 'ADMIN'
           ? '/admin'
           : loggedInUser.role === 'PM'
-          ? '/pm'
-          : '/developer';
+            ? '/pm'
+            : '/developer';
       navigate(from || defaultRoute, { replace: true });
     } catch (err: any) {
       const apiMessage =
@@ -84,7 +84,7 @@ export const LoginPage: React.FC = () => {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 text-primary mb-2 shadow-lg shadow-primary/5">
             <span className="text-2xl font-black tracking-tight">V</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Velozity</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Project Pulse</h1>
           <p className="text-sm text-muted-foreground">Real-Time Client Project Dashboard</p>
         </div>
 
@@ -152,7 +152,7 @@ export const LoginPage: React.FC = () => {
                 </label>
                 <Input
                   type="email"
-                  placeholder="name@velozity.com"
+                  placeholder="name@projectpulse.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isSubmitting}
@@ -196,7 +196,7 @@ export const LoginPage: React.FC = () => {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => handleQuickFill('admin@velozity.com')}
+                  onClick={() => handleQuickFill('admin@projectpulse.com')}
                   className="flex flex-col h-auto py-2 px-1 text-xs gap-1 hover:border-primary/50"
                 >
                   <Shield className="w-3.5 h-3.5 text-primary" />
@@ -208,7 +208,7 @@ export const LoginPage: React.FC = () => {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => handleQuickFill('pm1@velozity.com')}
+                  onClick={() => handleQuickFill('pm1@projectpulse.com')}
                   className="flex flex-col h-auto py-2 px-1 text-xs gap-1 hover:border-amber-400/50"
                 >
                   <Briefcase className="w-3.5 h-3.5 text-amber-400" />
@@ -220,7 +220,7 @@ export const LoginPage: React.FC = () => {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => handleQuickFill('dev1@velozity.com')}
+                  onClick={() => handleQuickFill('dev1@projectpulse.com')}
                   className="flex flex-col h-auto py-2 px-1 text-xs gap-1 hover:border-cyan-400/50"
                 >
                   <Code className="w-3.5 h-3.5 text-cyan-400" />
